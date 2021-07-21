@@ -81,6 +81,9 @@ class frozendict(Generic[K_co, V_co]):
         return self.__class__(deepcopy(self._source, memo))
 
     def __repr__(self, /):
+        if len(self._source) == 0:
+            return f'{self.__class__.__name__}()'
+
         return f'{self.__class__.__name__}({self._source})'
 
     def __str__(self, /):

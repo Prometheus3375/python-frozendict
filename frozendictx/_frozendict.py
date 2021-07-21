@@ -136,7 +136,7 @@ class frozendict(Generic[K_co, V_co]):
         self._hash = None
 
     def __sizeof__(self):
-        return object.__sizeof__(self) + getsizeof(self._source) + getsizeof(self._hash)
+        return object.__sizeof__(self) + getsizeof(self._source)
 
 
 __all__ = 'frozendict',

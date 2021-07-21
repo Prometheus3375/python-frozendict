@@ -121,12 +121,12 @@ class frozendict(Generic[K_co, V_co]):
             try:
                 self._hash = hash(frozenset(self._source.items()))
             except TypeError as e:
-                self._hash = str(e)
+                self._hash = str(e)[18:-1]
 
         if isinstance(self._hash, int):
             return self._hash
 
-        raise TypeError(self._hash)
+        raise TypeError(f'unhashable type: {self._hash!r}')
 
     def __getstate__(self, /):
         return self._source

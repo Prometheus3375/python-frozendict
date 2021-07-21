@@ -2,13 +2,14 @@ from collections.abc import ItemsView, Iterable, Iterator, KeysView, Mapping, Va
 from copy import deepcopy
 from itertools import chain
 from sys import getsizeof
-from typing import Generic, Optional, TypeVar, Union, overload, Protocol
+from typing import Generic, Optional, Protocol, TypeVar, Union, overload
 
 K = TypeVar('K')
 K_co = TypeVar('K_co', covariant=True)
 V_co = TypeVar('V_co', covariant=True)
 T = TypeVar('T')
 S = TypeVar('S')
+# SubClass = TypeVar('SubClass', bound='frozendict')
 
 
 class SupportsKeysAndGetItem(Protocol[K, V_co]):
@@ -56,7 +57,7 @@ class frozendict(Generic[K_co, V_co]):
     def fromkeys(cls, iterable: Iterable[T], value: S, /) -> 'frozendict[T, S]': ...
 
     @classmethod
-    def fromkeys(cls, iterable: Iterable, value=None, /):
+    def fromkeys(cls, iterable, value=None, /):
         return cls((k, value) for k in iterable)
 
     def keys(self, /) -> KeysView[K_co]:
@@ -80,14 +81,14 @@ class frozendict(Generic[K_co, V_co]):
 
         return self.__class__(deepcopy(self._source, memo))
 
+    def __str__(self, /):
+        return str(self._source)
+
     def __repr__(self, /):
         if len(self._source) == 0:
             return f'{self.__class__.__name__}()'
 
         return f'{self.__class__.__name__}({self._source})'
-
-    def __str__(self, /):
-        return str(self._source)
 
     def __len__(self, /):
         return len(self._source)

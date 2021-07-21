@@ -128,8 +128,12 @@ class frozendict(Generic[K_co, V_co]):
 
         raise TypeError(self._hash)
 
-    def __getnewargs__(self, /):
-        return tuple(self.items())
+    def __getstate__(self, /):
+        return self._source
+
+    def __setstate__(self, state, /):
+        self._source = state
+        self._hash = None
 
     def __sizeof__(self):
         return object.__sizeof__(self) + getsizeof(self._source) + getsizeof(self._hash)

@@ -23,6 +23,7 @@ def dict_hash(m: Mapping, /) -> int:
 
 @Mapping.register
 class FrozendictBase(Generic[K_co, V_co]):
+    """Base class for immutable dictionaries. Unhashable, supports copy and pickle modules."""
     __slots__ = '_source',
 
     # region new overload
@@ -61,6 +62,7 @@ class FrozendictBase(Generic[K_co, V_co]):
     # endregion
 
     def get(self, key, default=None, /):
+        """Return the value for key if ``key`` is in the dictionary, else ``default``."""
         return self._source.get(key, default)
 
     # region fromkeys overload
@@ -73,16 +75,20 @@ class FrozendictBase(Generic[K_co, V_co]):
     # endregion
 
     @classmethod
-    def fromkeys(cls, iterable, value=None, /):
+    def fromkeys(cls, iterable, value=None, /) -> 'FrozendictBase':
+        """Create a new dictionary with keys from ``iterable`` and values set to ``value``."""
         return cls((k, value) for k in iterable)
 
     def keys(self, /) -> KeysView[K_co]:
+        """Return a set-like object providing a view on keys"""
         return self._source.keys()
 
     def values(self, /) -> ValuesView[V_co]:
+        """Return an object providing a view on values"""
         return self._source.values()
 
     def items(self, /) -> ItemsView[K_co, V_co]:
+        """Return a set-like object providing a view on key-value pairs"""
         return self._source.items()
 
     def __copy__(self, /):
@@ -93,7 +99,7 @@ class FrozendictBase(Generic[K_co, V_co]):
         # i.e. all values are immutable too
         # but this requires a whole traverse through dict
         # or hash value caching
-        # if such optimiztion is necessary, subclass can be created
+        # if such optimization is necessary, it can be used in a subclass
         return self.__class__(deepcopy(self._source, memo))
 
     def __str__(self, /):
@@ -140,6 +146,8 @@ class FrozendictBase(Generic[K_co, V_co]):
 
 
 class frozendict(FrozendictBase[K_co, V_co]):
+    """Subclass of :class:`FrozendictBase`. Hashable if all values are hashable.
+    If hashable, hash value is cached."""
     __slots__ = '_hash',
 
     # region new overload
@@ -196,7 +204,7 @@ class frozendict(FrozendictBase[K_co, V_co]):
     @overload
     def fromkeys(cls, iterable: Iterable[T], value: S, /) -> 'frozendict[T, S]': ...
     @classmethod
-    def fromkeys(cls, iterable, value=None, /): ...
+    def fromkeys(cls, iterable, value=None, /) -> 'frozendict': ...
 
     def __or__(self, other: Mapping[K_co, V_co], /) -> 'frozendict[K_co, V_co]': ...
     def __ror__(self, other: Mapping[K_co, V_co], /) -> 'frozendict[K_co, V_co]': ...

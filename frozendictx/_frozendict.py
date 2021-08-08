@@ -9,7 +9,6 @@ K_co = TypeVar('K_co', covariant=True)
 V_co = TypeVar('V_co', covariant=True)
 T = TypeVar('T')
 S = TypeVar('S')
-# SubClass = TypeVar('SubClass', bound='frozendict')
 
 
 class SupportsKeysAndGetItem(Protocol[K, V_co]):
@@ -17,44 +16,61 @@ class SupportsKeysAndGetItem(Protocol[K, V_co]):
     def __getitem__(self, item: K, /) -> V_co: ...
 
 
+# TODO learn in which versions Set._hash is fixed and use optimized way to calculate hash
+def dict_hash(m: Mapping, /) -> int:
+    return hash(frozenset(m.items()))
+
+
 @Mapping.register
-class frozendict(Generic[K_co, V_co]):
-    __slots__ = '_source', '_hash'
+class FrozendictBase(Generic[K_co, V_co]):
+    __slots__ = '_source',
 
+    # region new overload
     @overload
-    def __init__(self, /, **kwargs: V_co): ...
+    def __new__(cls, /) -> 'FrozendictBase': ...
     @overload
-    def __init__(self, mapping: SupportsKeysAndGetItem[K_co, V_co], /): ...
+    def __new__(cls, /, **kwargs: V_co) -> 'FrozendictBase[str, V_co]': ...
     @overload
-    def __init__(self, mapping: SupportsKeysAndGetItem[str, V_co], /, **kwargs: V_co): ...
+    def __new__(cls, mapping: SupportsKeysAndGetItem[K_co, V_co], /) -> 'FrozendictBase[K_co, V_co]': ...
     @overload
-    def __init__(self, iterable: Iterable[tuple[K_co, V_co]], /): ...
+    def __new__(cls, mapping: SupportsKeysAndGetItem[str, V_co], /, **kwargs: V_co) -> 'FrozendictBase[str, V_co]': ...
     @overload
-    def __init__(self, iterable: Iterable[tuple[str, V_co]], /, **kwargs: V_co): ...
+    def __new__(cls, iterable: Iterable[tuple[K_co, V_co]], /) -> 'FrozendictBase[K_co, V_co]': ...
+    @overload
+    def __new__(cls, iterable: Iterable[tuple[str, V_co]], /, **kwargs: V_co) -> 'FrozendictBase[str, V_co]': ...
+    # endregion
 
-    def __init__(self, iterable=(), /, **kwargs):
+    def __new__(cls, iterable=(), /, **kwargs):
+        self = object.__new__(cls)
         self._source = dict(iterable, **kwargs)
-        self._hash = None
+        return self
+
+    def __getnewargs__(self, /):
+        return self._source,
 
     def __getitem__(self, item: K_co, /) -> V_co:
         return self._source[item]
 
+    # region get overload
     @overload
     def get(self, key: K_co, /) -> Optional[V_co]: ...
     @overload
     def get(self, key: K_co, default: V_co, /) -> V_co: ...
     @overload
     def get(self, key: K_co, default: T, /) -> Union[V_co, T]: ...
+    # endregion
 
     def get(self, key, default=None, /):
         return self._source.get(key, default)
 
+    # region fromkeys overload
     @classmethod
     @overload
-    def fromkeys(cls, iterable: Iterable[T], /) -> 'frozendict[T, None]': ...
+    def fromkeys(cls, iterable: Iterable[T], /) -> 'FrozendictBase[T, None]': ...
     @classmethod
     @overload
-    def fromkeys(cls, iterable: Iterable[T], value: S, /) -> 'frozendict[T, S]': ...
+    def fromkeys(cls, iterable: Iterable[T], value: S, /) -> 'FrozendictBase[T, S]': ...
+    # endregion
 
     @classmethod
     def fromkeys(cls, iterable, value=None, /):
@@ -69,16 +85,15 @@ class frozendict(Generic[K_co, V_co]):
     def items(self, /) -> ItemsView[K_co, V_co]:
         return self._source.items()
 
-    # def copy(self, /):
-    #     return self
-
     def __copy__(self, /):
         return self
 
     def __deepcopy__(self, memo, /):
-        if isinstance(self._hash, int):
-            return self
-
+        # deepcopy can return self if all values are hashable
+        # i.e. all values are immutable too
+        # but this requires a whole traverse through dict
+        # or hash value caching
+        # if such optimiztion is necessary, subclass can be created
         return self.__class__(deepcopy(self._source, memo))
 
     def __str__(self, /):
@@ -102,13 +117,13 @@ class frozendict(Generic[K_co, V_co]):
     def __reversed__(self, /) -> Iterator[K_co]:
         return reversed(self._source)
 
-    def __or__(self, other: Mapping[K_co, V_co], /) -> 'frozendict[K_co, V_co]':
+    def __or__(self, other: Mapping[K_co, V_co], /) -> 'FrozendictBase[K_co, V_co]':
         if isinstance(other, Mapping):
             return self.__class__(chain(self._source.items(), other.items()))
 
         return NotImplemented
 
-    def __ror__(self, other: Mapping[K_co, V_co], /) -> 'frozendict[K_co, V_co]':
+    def __ror__(self, other: Mapping[K_co, V_co], /) -> 'FrozendictBase[K_co, V_co]':
         if isinstance(other, Mapping):
             return self.__class__(chain(other.items(), self._source.items()))
 
@@ -120,10 +135,37 @@ class frozendict(Generic[K_co, V_co]):
     def __ne__(self, other, /):
         return self._source != other
 
+    def __sizeof__(self):
+        return object.__sizeof__(self) + getsizeof(self._source)
+
+
+class frozendict(FrozendictBase[K_co, V_co]):
+    __slots__ = '_hash',
+
+    # region new overload
+    @overload
+    def __new__(cls, /) -> 'frozendict': ...
+    @overload
+    def __new__(cls, /, **kwargs: V_co) -> 'frozendict[str, V_co]': ...
+    @overload
+    def __new__(cls, mapping: SupportsKeysAndGetItem[K_co, V_co], /) -> 'frozendict[K_co, V_co]': ...
+    @overload
+    def __new__(cls, mapping: SupportsKeysAndGetItem[str, V_co], /, **kwargs: V_co) -> 'frozendict[str, V_co]': ...
+    @overload
+    def __new__(cls, iterable: Iterable[tuple[K_co, V_co]], /) -> 'frozendict[K_co, V_co]': ...
+    @overload
+    def __new__(cls, iterable: Iterable[tuple[str, V_co]], /, **kwargs: V_co) -> 'frozendict[str, V_co]': ...
+    # endregion
+
+    def __new__(cls, iterable=(), /, **kwargs):
+        self = super().__new__(cls, iterable, **kwargs)
+        self._hash = None
+        return self
+
     def __hash__(self, /):
         if self._hash is None:
             try:
-                self._hash = hash(frozenset(self._source.items()))
+                self._hash = dict_hash(self._source)
             except TypeError as e:
                 self._hash = str(e)[18:-1]
 
@@ -132,15 +174,34 @@ class frozendict(Generic[K_co, V_co]):
 
         raise TypeError(f'unhashable type: {self._hash!r}')
 
-    def __getstate__(self, /):
-        return self._source
+    def __deepcopy__(self, memo, /):
+        if self._hash is None:
+            try:
+                self.__hash__()
+            except TypeError:
+                pass
 
-    def __setstate__(self, state, /):
-        self._source = state
-        self._hash = None
+        if isinstance(self._hash, int):
+            return self
 
-    def __sizeof__(self):
-        return object.__sizeof__(self) + getsizeof(self._source)
+        return self.__class__(deepcopy(self._source, memo))
 
+    # region Overload for PyCharm
+    # noinspection PyMethodOverriding
+    @classmethod
+    @overload
+    def fromkeys(cls, iterable: Iterable[T], /) -> 'frozendict[T, None]': ...
+    # noinspection PyMethodOverriding
+    @classmethod
+    @overload
+    def fromkeys(cls, iterable: Iterable[T], value: S, /) -> 'frozendict[T, S]': ...
+    @classmethod
+    def fromkeys(cls, iterable, value=None, /): ...
 
-__all__ = 'frozendict',
+    def __or__(self, other: Mapping[K_co, V_co], /) -> 'frozendict[K_co, V_co]': ...
+    def __ror__(self, other: Mapping[K_co, V_co], /) -> 'frozendict[K_co, V_co]': ...
+
+    del fromkeys
+    del __or__
+    del __ror__
+    # endregion

@@ -96,7 +96,7 @@ class FrozendictBase(Generic[K_co, V_co]):
     def __copy__(self, /):
         return self
 
-    def __deepcopy__(self, memo, /):
+    def __deepcopy__(self, memo: dict, /):
         # deepcopy can return self if all values are hashable
         # i.e. all values are immutable too
         # but this requires a whole traverse through dict
@@ -116,7 +116,7 @@ class FrozendictBase(Generic[K_co, V_co]):
     def __len__(self, /):
         return len(self._source)
 
-    def __contains__(self, item, /):
+    def __contains__(self, item: K_co, /):
         return item in self._source
 
     def __iter__(self, /) -> Iterator[K_co]:
@@ -137,13 +137,13 @@ class FrozendictBase(Generic[K_co, V_co]):
 
         return NotImplemented
 
-    def __eq__(self, other, /):
+    def __eq__(self, other: Mapping[K_co, V_co], /):
         return self._source == other
 
-    def __ne__(self, other, /):
+    def __ne__(self, other: Mapping[K_co, V_co], /):
         return self._source != other
 
-    def __sizeof__(self):
+    def __sizeof__(self, /):
         return object.__sizeof__(self) + getsizeof(self._source)
 
 

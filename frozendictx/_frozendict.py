@@ -17,7 +17,9 @@ class SupportsKeysAndGetItem(Protocol[K, V_co]):
 
 
 # TODO learn in which versions Set._hash is fixed and use optimized way to calculate hash
-def dict_hash(m: Mapping, /) -> int:
+# More info: https://bugs.python.org/issue44704
+def mapping_hash(m: Mapping, /) -> int:
+    """Calculate hash value of a mapping. All mappings must use this function."""
     return hash(frozenset(m.items()))
 
 
@@ -173,7 +175,7 @@ class frozendict(FrozendictBase[K_co, V_co]):
     def __hash__(self, /):
         if self._hash is None:
             try:
-                self._hash = dict_hash(self._source)
+                self._hash = mapping_hash(self._source)
             except TypeError as e:
                 self._hash = str(e)[18:-1]
 

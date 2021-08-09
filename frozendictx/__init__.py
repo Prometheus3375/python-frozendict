@@ -1,3 +1,3 @@
-from ._frozendict import FrozendictBase, dict_hash, frozendict
+from ._frozendict import FrozendictBase, frozendict, mapping_hash
 
-__all__ = 'frozendict', 'dict_hash', 'FrozendictBase'
+__all__ = 'frozendict', 'mapping_hash', 'FrozendictBase'

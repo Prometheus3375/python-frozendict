@@ -147,7 +147,7 @@ class FrozendictBase(Generic[K_co, V_co]):
         return object.__sizeof__(self) + getsizeof(self._source)
 
 
-def get_hash_value_or_unhashable_type(mapping: Mapping) -> Union[int, str]:
+def get_hash_value_or_unhashable_type(mapping: Mapping, /) -> Union[int, str]:
     try:
         return mapping_hash(mapping)
     except TypeError as e:

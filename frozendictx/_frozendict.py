@@ -147,6 +147,13 @@ class FrozendictBase(Generic[K_co, V_co]):
         return object.__sizeof__(self) + getsizeof(self._source)
 
 
+def get_hash_value_or_unhashable_type(mapping: Mapping) -> Union[int, str]:
+    try:
+        return mapping_hash(mapping)
+    except TypeError as e:
+        return str(e)[18:-1]
+
+
 class frozendict(FrozendictBase[K_co, V_co]):
     """Subclass of :class:`FrozendictBase`. Hashable if all values are hashable.
     If hashable, hash value is cached."""
@@ -174,10 +181,7 @@ class frozendict(FrozendictBase[K_co, V_co]):
 
     def __hash__(self, /):
         if self._hash is None:
-            try:
-                self._hash = mapping_hash(self._source)
-            except TypeError as e:
-                self._hash = str(e)[18:-1]
+            self._hash = get_hash_value_or_unhashable_type(self._source)
 
         if isinstance(self._hash, int):
             return self._hash
@@ -186,10 +190,7 @@ class frozendict(FrozendictBase[K_co, V_co]):
 
     def __deepcopy__(self, memo, /):
         if self._hash is None:
-            try:
-                self.__hash__()
-            except TypeError:
-                pass
+            self._hash = get_hash_value_or_unhashable_type(self._source)
 
         if isinstance(self._hash, int):
             return self

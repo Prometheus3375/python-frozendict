@@ -156,7 +156,7 @@ def get_hash_value_or_unhashable_type(mapping: Mapping, /) -> Union[int, str]:
 
 class frozendict(FrozendictBase[K_co, V_co]):
     """Subclass of :class:`FrozendictBase`. Hashable if all values are hashable.
-    If hashable, hash value is cached."""
+    If hashable, hash value is cached after its first calculation."""
     __slots__ = '_hash',
 
     # region new overload

@@ -51,6 +51,20 @@ class FrozendictBase(Generic[K_co, V_co]):
     def __getnewargs__(self, /):
         return self._source,
 
+    # region fromkeys overload
+    @classmethod
+    @overload
+    def fromkeys(cls, iterable: Iterable[T], /) -> 'FrozendictBase[T, None]': ...
+    @classmethod
+    @overload
+    def fromkeys(cls, iterable: Iterable[T], value: S, /) -> 'FrozendictBase[T, S]': ...
+    # endregion
+
+    @classmethod
+    def fromkeys(cls, iterable, value=None, /) -> 'FrozendictBase':
+        """Create a new dictionary with keys from ``iterable`` and values set to ``value``."""
+        return cls((k, value) for k in iterable)
+
     def __getitem__(self, item: K_co, /) -> V_co:
         return self._source[item]
 
@@ -66,20 +80,6 @@ class FrozendictBase(Generic[K_co, V_co]):
     def get(self, key, default=None, /):
         """Return the value for key if ``key`` is in the dictionary, else ``default``."""
         return self._source.get(key, default)
-
-    # region fromkeys overload
-    @classmethod
-    @overload
-    def fromkeys(cls, iterable: Iterable[T], /) -> 'FrozendictBase[T, None]': ...
-    @classmethod
-    @overload
-    def fromkeys(cls, iterable: Iterable[T], value: S, /) -> 'FrozendictBase[T, S]': ...
-    # endregion
-
-    @classmethod
-    def fromkeys(cls, iterable, value=None, /) -> 'FrozendictBase':
-        """Create a new dictionary with keys from ``iterable`` and values set to ``value``."""
-        return cls((k, value) for k in iterable)
 
     def keys(self, /) -> KeysView[K_co]:
         """Return a set-like object providing a view on keys"""

@@ -1,0 +1,5 @@
+- [Packaging Python Projects](https://packaging.python.org/tutorials/packaging-projects/)
+- [setuptools docs](https://setuptools.readthedocs.io/en/latest/build_meta.html)
+- [Python package index](https://pypi.org/)
+- [Python package index for tests](https://test.pypi.org/)
+- [Source of frozendict package](https://github.com/Marco-Sulla/python-frozendict)

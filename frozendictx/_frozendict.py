@@ -1,7 +1,7 @@
 from collections.abc import ItemsView, Iterable, Iterator, KeysView, Mapping, ValuesView
 from copy import deepcopy
 from itertools import chain
-from sys import getsizeof
+from sys import getsizeof, version_info
 from typing import Generic, Optional, Protocol, TypeVar, Union, overload
 
 K = TypeVar('K')
@@ -16,11 +16,24 @@ class SupportsKeysAndGetItem(Protocol[K, V_co]):
     def __getitem__(self, item: K, /) -> V_co: ...
 
 
-# TODO learn in which versions Set._hash is fixed and use optimized way to calculate hash
+# Set._hash and frozenset.__hash__ have different implementation
+# since 3.6.5 till 3.9.6 due to https://bugs.python.org/issue26163
 # More info: https://bugs.python.org/issue44704
-def mapping_hash(m: Mapping, /) -> int:
-    """Calculate hash value of a mapping. All mappings must use this function."""
-    return hash(frozenset(m.items()))
+# Changelogs:
+# https://docs.python.org/release/3.10.0/whatsnew/changelog.html#python-3-10-0-release-candidate-1
+# https://docs.python.org/release/3.9.7/whatsnew/changelog.html#python-3-9-7-final
+if version_info >= (3, 9, 7):
+    from collections.abc import Set
+
+
+    def mapping_hash(m: Mapping, /) -> int:
+        """Calculate hash value of a mapping. All mappings must use this function."""
+        # noinspection PyUnresolvedReferences,PyProtectedMember
+        return Set._hash(m.items())
+else:
+    def mapping_hash(m: Mapping, /) -> int:
+        """Calculate hash value of a mapping. All mappings must use this function."""
+        return hash(frozenset(m.items()))
 
 
 @Mapping.register

@@ -46,17 +46,34 @@ class FrozendictBase(Generic[K_co, V_co]):
     def __new__(cls, /) -> 'FrozendictBase': ...
     @overload
     def __new__(cls, /, **kwargs: V_co) -> 'FrozendictBase[str, V_co]': ...
+
     @overload
-    def __new__(cls, mapping: SupportsKeysAndGetItem[K_co, V_co], /) -> 'FrozendictBase[K_co, V_co]': ...
+    def __new__(
+        cls,
+        mapping: SupportsKeysAndGetItem[K_co, V_co],
+        /,
+    ) -> 'FrozendictBase[K_co, V_co]': ...
+
     @overload
-    def __new__(cls, mapping: SupportsKeysAndGetItem[str, V_co], /, **kwargs: V_co) -> 'FrozendictBase[str, V_co]': ...
+    def __new__(
+        cls,
+        mapping: SupportsKeysAndGetItem[str, V_co],
+        /,
+        **kwargs: V_co,
+    ) -> 'FrozendictBase[str, V_co]': ...
     @overload
     def __new__(cls, iterable: Iterable[tuple[K_co, V_co]], /) -> 'FrozendictBase[K_co, V_co]': ...
+
     @overload
-    def __new__(cls, iterable: Iterable[tuple[str, V_co]], /, **kwargs: V_co) -> 'FrozendictBase[str, V_co]': ...
+    def __new__(
+        cls,
+        iterable: Iterable[tuple[str, V_co]],
+        /,
+        **kwargs: V_co,
+    ) -> 'FrozendictBase[str, V_co]': ...
     # endregion
 
-    def __new__(cls, iterable=(), /, **kwargs):
+    def __new__(cls, iterable = (), /, **kwargs):
         self = object.__new__(cls)
         self._source = dict(iterable, **kwargs)
         return self
@@ -74,7 +91,7 @@ class FrozendictBase(Generic[K_co, V_co]):
     # endregion
 
     @classmethod
-    def fromkeys(cls, iterable, value=None, /) -> 'FrozendictBase':
+    def fromkeys(cls, iterable, value = None, /) -> 'FrozendictBase':
         """Create a new dictionary with keys from ``iterable`` and values set to ``value``."""
         return cls((k, value) for k in iterable)
 
@@ -90,7 +107,7 @@ class FrozendictBase(Generic[K_co, V_co]):
     def get(self, key: K_co, default: T, /) -> Union[V_co, T]: ...
     # endregion
 
-    def get(self, key, default=None, /):
+    def get(self, key, default = None, /):
         """Return the value for key if ``key`` is in the dictionary, else ``default``."""
         return self._source.get(key, default)
 
@@ -177,17 +194,34 @@ class frozendict(FrozendictBase[K_co, V_co]):
     def __new__(cls, /) -> 'frozendict': ...
     @overload
     def __new__(cls, /, **kwargs: V_co) -> 'frozendict[str, V_co]': ...
+
     @overload
-    def __new__(cls, mapping: SupportsKeysAndGetItem[K_co, V_co], /) -> 'frozendict[K_co, V_co]': ...
+    def __new__(
+        cls,
+        mapping: SupportsKeysAndGetItem[K_co, V_co],
+        /,
+    ) -> 'frozendict[K_co, V_co]': ...
+
     @overload
-    def __new__(cls, mapping: SupportsKeysAndGetItem[str, V_co], /, **kwargs: V_co) -> 'frozendict[str, V_co]': ...
+    def __new__(
+        cls,
+        mapping: SupportsKeysAndGetItem[str, V_co],
+        /,
+        **kwargs: V_co,
+    ) -> 'frozendict[str, V_co]': ...
     @overload
     def __new__(cls, iterable: Iterable[tuple[K_co, V_co]], /) -> 'frozendict[K_co, V_co]': ...
+
     @overload
-    def __new__(cls, iterable: Iterable[tuple[str, V_co]], /, **kwargs: V_co) -> 'frozendict[str, V_co]': ...
+    def __new__(
+        cls,
+        iterable: Iterable[tuple[str, V_co]],
+        /,
+        **kwargs: V_co,
+    ) -> 'frozendict[str, V_co]': ...
     # endregion
 
-    def __new__(cls, iterable=(), /, **kwargs):
+    def __new__(cls, iterable = (), /, **kwargs):
         self = super().__new__(cls, iterable, **kwargs)
         self._hash = None
         return self
@@ -220,7 +254,7 @@ class frozendict(FrozendictBase[K_co, V_co]):
     @overload
     def fromkeys(cls, iterable: Iterable[T], value: S, /) -> 'frozendict[T, S]': ...
     @classmethod
-    def fromkeys(cls, iterable, value=None, /) -> 'frozendict': ...
+    def fromkeys(cls, iterable, value = None, /) -> 'frozendict': ...
 
     def __or__(self, other: Mapping[K_co, V_co], /) -> 'frozendict[K_co, V_co]': ...
     def __ror__(self, other: Mapping[K_co, V_co], /) -> 'frozendict[K_co, V_co]': ...

@@ -112,11 +112,10 @@ class FrozendictBase(Generic[K_co, V_co]):
         return self
 
     def __deepcopy__(self, memo: dict, /):
-        # deepcopy can return self if all values are hashable
-        # i.e. all values are immutable too
-        # but this requires a whole traverse through dict
-        # or hash value caching
-        # if such optimization is necessary, it can be used in a subclass
+        # This method can return self if all values are hashable,
+        # i.e., all values are immutable too.
+        # But this requires a whole traverse through dict or hash value caching.
+        # If such optimization is necessary, it can be used in a subclass.
         return self.__class__(deepcopy(self._source, memo))
 
     def __str__(self, /):

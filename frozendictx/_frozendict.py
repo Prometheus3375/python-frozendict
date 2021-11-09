@@ -97,15 +97,15 @@ class FrozendictBase(Generic[K_co, V_co]):
         return self._source.get(key, default)
 
     def keys(self, /) -> KeysView[K_co]:
-        """Return a set-like object providing a view on keys"""
+        """Return a set-like object providing a view on keys."""
         return self._source.keys()
 
     def values(self, /) -> ValuesView[V_co]:
-        """Return an object providing a view on values"""
+        """Return an object providing a view on values."""
         return self._source.values()
 
     def items(self, /) -> ItemsView[K_co, V_co]:
-        """Return a set-like object providing a view on key-value pairs"""
+        """Return a set-like object providing a view on key-value pairs."""
         return self._source.items()
 
     def __copy__(self, /):

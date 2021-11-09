@@ -158,8 +158,18 @@ class FrozendictBase(Generic[K_co, V_co]):
     def __ne__(self, other: Mapping[K_co, V_co], /):
         return self._source != other
 
-    def __sizeof__(self, /):
-        return object.__sizeof__(self) + getsizeof(self._source)
+    def sizeof(self, /, gc_self: bool = True, gc_inner: bool = False) -> int:
+        """Return the size of a dictionary in bytes.
+
+        :param gc_self: If true, garbage collector overhead for itself is included.
+        :param gc_inner: If true, garbage collector overhead for inner dictionary is included.
+        """
+        # It is better not to overwrite __sizeof__ method.
+        # Instead, add a custom method.
+        return (
+            (getsizeof(self) if gc_self else self.__sizeof__())
+            + (getsizeof(self._source) if gc_inner else self._source.__sizeof__())
+        )
 
 
 def get_hash_value_or_unhashable_type(mapping: Mapping, /) -> Union[int, str]:

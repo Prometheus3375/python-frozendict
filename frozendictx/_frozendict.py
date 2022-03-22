@@ -8,7 +8,6 @@ K = TypeVar('K')
 K_co = TypeVar('K_co', covariant=True)
 V_co = TypeVar('V_co', covariant=True)
 T = TypeVar('T')
-S = TypeVar('S')
 
 
 class SupportsKeysAndGetItem(Protocol[K, V_co]):
@@ -69,10 +68,10 @@ class FrozendictBase(Generic[K_co, V_co]):
     # region fromkeys overload
     @classmethod
     @overload
-    def fromkeys(cls, iterable: Iterable[T], /) -> 'FrozendictBase[T, None]': ...
+    def fromkeys(cls, iterable: Iterable[K_co], /) -> 'FrozendictBase[K_co, None]': ...
     @classmethod
     @overload
-    def fromkeys(cls, iterable: Iterable[T], value: S, /) -> 'FrozendictBase[T, S]': ...
+    def fromkeys(cls, iterable: Iterable[K_co], value: V_co, /) -> 'FrozendictBase[K_co, V_co]': ...
     # endregion
 
     @classmethod
@@ -242,11 +241,11 @@ class frozendict(FrozendictBase[K_co, V_co]):
     # noinspection PyMethodOverriding
     @classmethod
     @overload
-    def fromkeys(cls, iterable: Iterable[T], /) -> 'frozendict[T, None]': ...
+    def fromkeys(cls, iterable: Iterable[K_co], /) -> 'frozendict[K_co, None]': ...
     # noinspection PyMethodOverriding
     @classmethod
     @overload
-    def fromkeys(cls, iterable: Iterable[T], value: S, /) -> 'frozendict[T, S]': ...
+    def fromkeys(cls, iterable: Iterable[K_co], value: V_co, /) -> 'frozendict[K_co, V_co]': ...
     @classmethod
     def fromkeys(cls, iterable, value = None, /) -> 'frozendict': ...
 

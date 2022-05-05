@@ -2,7 +2,7 @@ from collections.abc import Hashable, ItemsView, Iterable, Iterator, KeysView, M
 from copy import deepcopy
 from itertools import chain
 from sys import getsizeof
-from typing import Generic, Optional, Protocol, TypeVar, Union, overload
+from typing import Any, Generic, Optional, Protocol, TypeVar, Union, overload
 
 K = TypeVar('K')
 K_co = TypeVar('K_co', covariant=True)
@@ -151,11 +151,25 @@ class FrozendictBase(Generic[K_co, V_co]):
 
         return NotImplemented
 
-    def __eq__(self, other: Mapping[K_co, V_co], /):
-        return self._source == other
+    # todo measure the speed of such implementation with simple self._source == other
+    def __eq__(self, other: Any, /) -> bool:
+        if isinstance(other, FrozendictBase):
+            return self._source == other._source
 
-    def __ne__(self, other: Mapping[K_co, V_co], /):
-        return self._source != other
+        if isinstance(other, Mapping):
+            return other == self._source
+
+        return NotImplemented
+
+    # todo measure the speed of such implementation with simple self._source != other
+    def __ne__(self, other: Any, /) -> bool:
+        if isinstance(other, FrozendictBase):
+            return self._source != other._source
+
+        if isinstance(other, Mapping):
+            return other != self._source
+
+        return NotImplemented
 
     def sizeof(self, /, gc_self: bool = True, gc_inner: bool = False) -> int:
         """Return the size of a dictionary in bytes.

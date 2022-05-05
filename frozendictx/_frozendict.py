@@ -1,4 +1,4 @@
-from collections.abc import ItemsView, Iterable, Iterator, KeysView, Mapping, ValuesView
+from collections.abc import Hashable, ItemsView, Iterable, Iterator, KeysView, Mapping, ValuesView
 from copy import deepcopy
 from itertools import chain
 from sys import getsizeof
@@ -130,7 +130,7 @@ class FrozendictBase(Generic[K_co, V_co]):
     def __len__(self, /):
         return len(self._source)
 
-    def __contains__(self, item: K_co, /):
+    def __contains__(self, item: Hashable, /):
         return item in self._source
 
     def __iter__(self, /) -> Iterator[K_co]:

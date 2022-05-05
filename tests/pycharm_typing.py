@@ -2,7 +2,7 @@ from frozendictx._frozendict import FrozendictBase, frozendict
 
 
 def base_creation():
-    d1 = FrozendictBase()  # Union[FrozendictBase, FrozendictBase[str, Any]]
+    d1 = FrozendictBase()  # FrozendictBase | FrozendictBase[str, Any]
     d2 = FrozendictBase(one=1)  # FrozendictBase[str, int]
     d3 = FrozendictBase({'one': 1})  # FrozendictBase[str, int]
     d4 = FrozendictBase({1: 'one'})  # FrozendictBase[int, str]
@@ -24,9 +24,9 @@ def base_get():
     v0 = d[1]  # Expected type 'str'
     v1 = d['one']  # int
     v2 = d.get(1)  # Expected type 'str'
-    v3 = d.get('two')  # Optional[int]
+    v3 = d.get('two')  # int | None
     v4 = d.get('one', 0)  # int
-    v5 = d.get('two', '')  # Union[int, str]
+    v5 = d.get('two', '')  # int | str
 
 
 def base_views():
@@ -38,8 +38,9 @@ def base_views():
 
 def base_in():
     d = FrozendictBase([('one', 1), ('two', 2)], three=3)
-    v0 = 5 in d  # Expected type 'str'
+    v0 = 5 in d  # bool
     v1 = '' in d  # bool
+    v2 = set() in d  # bool
 
     for k1 in d: ...  # str
     for k2 in iter(d): ...  # str
@@ -60,12 +61,12 @@ def base_eq():
     d3 = FrozendictBase.fromkeys([1, 2, 3, 4, 5, 6], 'value')
     b1 = d1 == d2  # bool
     b2 = d1 != d2  # bool
-    b3 = d1 == d3  # Unexpected type(s)
-    b4 = d1 != d3  # Unexpected type(s)
+    b3 = d1 == d3  # bool
+    b4 = d1 != d3  # bool
 
 
 def frozendict_creation():
-    d1 = frozendict()  # Union[frozendict, frozendict[str, Any]]
+    d1 = frozendict()  # frozendict | frozendict[str, Any]
     d2 = frozendict(one=1)  # frozendict[str, int]
     d3 = frozendict({'one': 1})  # frozendict[str, int]
     d4 = frozendict({1: 'one'})  # frozendict[int, str]
@@ -93,5 +94,5 @@ def frozendict_or():
 def interclass_or():
     d1 = FrozendictBase([('one', 1), ('two', 2)], three=3)
     d2 = frozendict([('one', 1), ('two', 2)], three=3)
-    d3 = d1 | d2  # Union[FrozendictBase[str, int], frozendict[str, int]]
-    d4 = d2 | d1  # Union[frozendict[str, int], FrozendictBase[str, int]]
+    d3 = d1 | d2  # FrozendictBase[str, int] | frozendict[str, int]
+    d4 = d2 | d1  # frozendict[str, int] | FrozendictBase[str, int]

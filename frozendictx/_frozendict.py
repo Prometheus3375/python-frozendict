@@ -33,28 +33,29 @@ class FrozendictBase(Generic[K_co, V_co]):
 
     @overload
     def __new__(
-        cls,
-        mapping: SupportsKeysAndGetItem[K_co, V_co],
-        /,
-    ) -> 'FrozendictBase[K_co, V_co]': ...
+            cls,
+            mapping: SupportsKeysAndGetItem[K_co, V_co],
+            /,
+            ) -> 'FrozendictBase[K_co, V_co]': ...
 
     @overload
     def __new__(
-        cls,
-        mapping: SupportsKeysAndGetItem[str, V_co],
-        /,
-        **kwargs: V_co,
-    ) -> 'FrozendictBase[str, V_co]': ...
+            cls,
+            mapping: SupportsKeysAndGetItem[str, V_co],
+            /,
+            **kwargs: V_co,
+            ) -> 'FrozendictBase[str, V_co]': ...
+
     @overload
     def __new__(cls, iterable: Iterable[tuple[K_co, V_co]], /) -> 'FrozendictBase[K_co, V_co]': ...
 
     @overload
     def __new__(
-        cls,
-        iterable: Iterable[tuple[str, V_co]],
-        /,
-        **kwargs: V_co,
-    ) -> 'FrozendictBase[str, V_co]': ...
+            cls,
+            iterable: Iterable[tuple[str, V_co]],
+            /,
+            **kwargs: V_co,
+            ) -> 'FrozendictBase[str, V_co]': ...
     # endregion
 
     def __new__(cls, iterable = (), /, **kwargs):
@@ -165,8 +166,8 @@ class FrozendictBase(Generic[K_co, V_co]):
         # It is better not to overwrite __sizeof__ method.
         # Instead, add a custom method.
         return (
-            (getsizeof(self) if gc_self else self.__sizeof__())
-            + (getsizeof(self._source) if gc_inner else self._source.__sizeof__())
+                (getsizeof(self) if gc_self else self.__sizeof__())
+                + (getsizeof(self._source) if gc_inner else self._source.__sizeof__())
         )
 
 
@@ -190,28 +191,29 @@ class frozendict(FrozendictBase[K_co, V_co]):
 
     @overload
     def __new__(
-        cls,
-        mapping: SupportsKeysAndGetItem[K_co, V_co],
-        /,
-    ) -> 'frozendict[K_co, V_co]': ...
+            cls,
+            mapping: SupportsKeysAndGetItem[K_co, V_co],
+            /,
+            ) -> 'frozendict[K_co, V_co]': ...
 
     @overload
     def __new__(
-        cls,
-        mapping: SupportsKeysAndGetItem[str, V_co],
-        /,
-        **kwargs: V_co,
-    ) -> 'frozendict[str, V_co]': ...
+            cls,
+            mapping: SupportsKeysAndGetItem[str, V_co],
+            /,
+            **kwargs: V_co,
+            ) -> 'frozendict[str, V_co]': ...
+
     @overload
     def __new__(cls, iterable: Iterable[tuple[K_co, V_co]], /) -> 'frozendict[K_co, V_co]': ...
 
     @overload
     def __new__(
-        cls,
-        iterable: Iterable[tuple[str, V_co]],
-        /,
-        **kwargs: V_co,
-    ) -> 'frozendict[str, V_co]': ...
+            cls,
+            iterable: Iterable[tuple[str, V_co]],
+            /,
+            **kwargs: V_co,
+            ) -> 'frozendict[str, V_co]': ...
     # endregion
 
     def __new__(cls, iterable = (), /, **kwargs):

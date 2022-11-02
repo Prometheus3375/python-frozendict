@@ -76,7 +76,7 @@ class FrozendictBase(Generic[K_co, V_co]):
     # endregion
 
     @classmethod
-    def fromkeys(cls, iterable, value = None, /) -> 'FrozendictBase':
+    def fromkeys(cls, iterable, value = None, /):
         """Create a new dictionary with keys from ``iterable`` and values set to ``value``."""
         return cls((k, value) for k in iterable)
 
@@ -263,7 +263,7 @@ class frozendict(FrozendictBase[K_co, V_co]):
     @overload
     def fromkeys(cls, iterable: Iterable[K_co], value: V_co, /) -> 'frozendict[K_co, V_co]': ...
     @classmethod
-    def fromkeys(cls, iterable, value = None, /) -> 'frozendict': ...
+    def fromkeys(cls, iterable, value = None, /): ...
 
     def __or__(self, other: Mapping[K_co, V_co], /) -> 'frozendict[K_co, V_co]': ...
     def __ror__(self, other: Mapping[K_co, V_co], /) -> 'frozendict[K_co, V_co]': ...

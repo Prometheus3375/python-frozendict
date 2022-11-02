@@ -23,7 +23,7 @@ def mapping_hash(m: Mapping, /) -> int:
 @Mapping.register
 class FrozendictBase(Generic[K_co, V_co]):
     """Base class for immutable dictionaries. Unhashable, supports copy and pickle modules."""
-    __slots__ = '_source',
+    __slots__ = '__source',
 
     # region new overload
     @overload
@@ -60,11 +60,11 @@ class FrozendictBase(Generic[K_co, V_co]):
 
     def __new__(cls, iterable = (), /, **kwargs):
         self = object.__new__(cls)
-        self._source = dict(iterable, **kwargs)
+        self.__source = dict(iterable, **kwargs)
         return self
 
     def __getnewargs__(self, /):
-        return self._source,
+        return self.__source,
 
     # region fromkeys overload
     @classmethod
@@ -81,7 +81,7 @@ class FrozendictBase(Generic[K_co, V_co]):
         return cls((k, value) for k in iterable)
 
     def __getitem__(self, item: K_co, /) -> V_co:
-        return self._source[item]
+        return self.__source[item]
 
     # region get overload
     @overload
@@ -94,19 +94,19 @@ class FrozendictBase(Generic[K_co, V_co]):
 
     def get(self, key, default = None, /):
         """Return the value for key if ``key`` is in the dictionary, else ``default``."""
-        return self._source.get(key, default)
+        return self.__source.get(key, default)
 
     def keys(self, /) -> KeysView[K_co]:
         """Return a set-like object providing a view on keys."""
-        return self._source.keys()
+        return self.__source.keys()
 
     def values(self, /) -> ValuesView[V_co]:
         """Return an object providing a view on values."""
-        return self._source.values()
+        return self.__source.values()
 
     def items(self, /) -> ItemsView[K_co, V_co]:
         """Return a set-like object providing a view on key-value pairs."""
-        return self._source.items()
+        return self.__source.items()
 
     def __copy__(self, /):
         return self
@@ -116,58 +116,58 @@ class FrozendictBase(Generic[K_co, V_co]):
         # i.e., all values are immutable too.
         # But this requires a whole traverse through dict or hash value caching.
         # If such optimization is necessary, it can be used in a subclass.
-        return self.__class__(deepcopy(self._source, memo))
+        return self.__class__(deepcopy(self.__source, memo))
 
     def __str__(self, /):
-        return str(self._source)
+        return str(self.__source)
 
     def __repr__(self, /):
-        if len(self._source) == 0:
+        if len(self.__source) == 0:
             return f'{self.__class__.__name__}()'
 
-        return f'{self.__class__.__name__}({self._source})'
+        return f'{self.__class__.__name__}({self.__source})'
 
     def __len__(self, /):
-        return len(self._source)
+        return len(self.__source)
 
     def __contains__(self, item: Hashable, /):
-        return item in self._source
+        return item in self.__source
 
     def __iter__(self, /) -> Iterator[K_co]:
-        return iter(self._source)
+        return iter(self.__source)
 
     def __reversed__(self, /) -> Iterator[K_co]:
-        return reversed(self._source)
+        return reversed(self.__source)
 
     def __or__(self, other: Mapping[K_co, V_co], /) -> 'FrozendictBase[K_co, V_co]':
         if isinstance(other, Mapping):
-            return self.__class__(chain(self._source.items(), other.items()))
+            return self.__class__(chain(self.__source.items(), other.items()))
 
         return NotImplemented
 
     def __ror__(self, other: Mapping[K_co, V_co], /) -> 'FrozendictBase[K_co, V_co]':
         if isinstance(other, Mapping):
-            return self.__class__(chain(other.items(), self._source.items()))
+            return self.__class__(chain(other.items(), self.__source.items()))
 
         return NotImplemented
 
-    # todo measure the speed of such implementation with simple self._source == other
+    # todo measure the speed of such implementation with simple self.__source == other
     def __eq__(self, other: Any, /) -> bool:
         if isinstance(other, FrozendictBase):
-            return self._source == other._source
+            return self.__source == other.__source
 
         if isinstance(other, Mapping):
-            return other == self._source
+            return other == self.__source
 
         return NotImplemented
 
-    # todo measure the speed of such implementation with simple self._source != other
+    # todo measure the speed of such implementation with simple self.__source != other
     def __ne__(self, other: Any, /) -> bool:
         if isinstance(other, FrozendictBase):
-            return self._source != other._source
+            return self.__source != other.__source
 
         if isinstance(other, Mapping):
-            return other != self._source
+            return other != self.__source
 
         return NotImplemented
 
@@ -181,7 +181,7 @@ class FrozendictBase(Generic[K_co, V_co]):
         # Instead, add a custom method.
         return (
                 (getsizeof(self) if gc_self else self.__sizeof__())
-                + (getsizeof(self._source) if gc_inner else self._source.__sizeof__())
+                + (getsizeof(self.__source) if gc_inner else self.__source.__sizeof__())
         )
 
 
@@ -195,7 +195,7 @@ def get_hash_value_or_unhashable_type(mapping: Mapping, /) -> Union[int, str]:
 class frozendict(FrozendictBase[K_co, V_co]):
     """Subclass of :class:`FrozendictBase`. Hashable if all values are hashable.
     If hashable, hash value is cached after its first calculation."""
-    __slots__ = '_hash',
+    __slots__ = '__hash',
 
     # region new overload
     @overload
@@ -232,26 +232,26 @@ class frozendict(FrozendictBase[K_co, V_co]):
 
     def __new__(cls, iterable = (), /, **kwargs):
         self = super().__new__(cls, iterable, **kwargs)
-        self._hash = None
+        self.__hash = None
         return self
 
     def __hash__(self, /):
-        if self._hash is None:
-            self._hash = get_hash_value_or_unhashable_type(self._source)
+        if self.__hash is None:
+            self.__hash = get_hash_value_or_unhashable_type(self._FrozendictBase__source)
 
-        if isinstance(self._hash, int):
-            return self._hash
+        if isinstance(self.__hash, int):
+            return self.__hash
 
-        raise TypeError(f'unhashable type: {self._hash!r}')
+        raise TypeError(f'unhashable type: {self.__hash!r}')
 
     def __deepcopy__(self, memo, /):
-        if self._hash is None:
-            self._hash = get_hash_value_or_unhashable_type(self._source)
+        if self.__hash is None:
+            self.__hash = get_hash_value_or_unhashable_type(self._FrozendictBase__source)
 
-        if isinstance(self._hash, int):
+        if isinstance(self.__hash, int):
             return self
 
-        return self.__class__(deepcopy(self._source, memo))
+        return self.__class__(deepcopy(self._FrozendictBase__source, memo))
 
     # region Overload for PyCharm
     # noinspection PyMethodOverriding

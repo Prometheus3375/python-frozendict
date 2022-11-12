@@ -31,8 +31,9 @@ class FrozendictBase(Generic[K_co, V_co]):
     @overload
     def __new__(cls, /, **kwargs: V_co) -> 'FrozendictBase[str, V_co]': ...
 
+    # https://github.com/python/mypy/issues/12733
     @overload
-    def __new__(
+    def __new__(  # type: ignore
             cls,
             mapping: SupportsKeysAndGetItem[K_co, V_co],
             /,
@@ -46,8 +47,13 @@ class FrozendictBase(Generic[K_co, V_co]):
             **kwargs: V_co,
             ) -> 'FrozendictBase[str, V_co]': ...
 
+    # https://github.com/python/mypy/issues/12733
     @overload
-    def __new__(cls, iterable: Iterable[tuple[K_co, V_co]], /) -> 'FrozendictBase[K_co, V_co]': ...
+    def __new__(  # type: ignore
+            cls,
+            iterable: Iterable[tuple[K_co, V_co]],
+            /
+            ) -> 'FrozendictBase[K_co, V_co]': ...
 
     @overload
     def __new__(
@@ -63,16 +69,22 @@ class FrozendictBase(Generic[K_co, V_co]):
         self.__source = dict(iterable, **kwargs)
         return self
 
+    # added to avoid missing (why?) attribute in mypy
+    def __init__(self, iterable = (), /, **kwargs):
+        self.__source = dict(iterable, **kwargs)
+
+    del __init__
+
     def __getnewargs__(self, /):
         return self.__source,
 
     # region fromkeys overload
     @classmethod
     @overload
-    def fromkeys(cls, iterable: Iterable[K_co], /) -> 'FrozendictBase[K_co, None]': ...
+    def fromkeys(cls, iterable: Iterable[K], /) -> 'FrozendictBase[K, None]': ...
     @classmethod
     @overload
-    def fromkeys(cls, iterable: Iterable[K_co], value: V_co, /) -> 'FrozendictBase[K_co, V_co]': ...
+    def fromkeys(cls, iterable: Iterable[K], value: T, /) -> 'FrozendictBase[K, T]': ...
     # endregion
 
     @classmethod
@@ -80,16 +92,16 @@ class FrozendictBase(Generic[K_co, V_co]):
         """Create a new dictionary with keys from ``iterable`` and values set to ``value``."""
         return cls((k, value) for k in iterable)
 
-    def __getitem__(self, item: K_co, /) -> V_co:
+    def __getitem__(self, item: K_co, /) -> V_co:  # type: ignore
         return self.__source[item]
 
     # region get overload
     @overload
-    def get(self, key: K_co, /) -> Optional[V_co]: ...
+    def get(self, key: K_co, /) -> Optional[V_co]: ...  # type: ignore
     @overload
-    def get(self, key: K_co, default: V_co, /) -> V_co: ...
+    def get(self, key: K_co, default: V_co, /) -> V_co: ...  # type: ignore
     @overload
-    def get(self, key: K_co, default: T, /) -> Union[V_co, T]: ...
+    def get(self, key: K_co, default: T, /) -> Union[V_co, T]: ...  # type: ignore
     # endregion
 
     def get(self, key, default = None, /):
@@ -204,8 +216,9 @@ class frozendict(FrozendictBase[K_co, V_co]):
     @overload
     def __new__(cls, /, **kwargs: V_co) -> 'frozendict[str, V_co]': ...
 
+    # https://github.com/python/mypy/issues/12733
     @overload
-    def __new__(
+    def __new__(  # type: ignore
             cls,
             mapping: SupportsKeysAndGetItem[K_co, V_co],
             /,
@@ -219,8 +232,13 @@ class frozendict(FrozendictBase[K_co, V_co]):
             **kwargs: V_co,
             ) -> 'frozendict[str, V_co]': ...
 
+    # https://github.com/python/mypy/issues/12733
     @overload
-    def __new__(cls, iterable: Iterable[tuple[K_co, V_co]], /) -> 'frozendict[K_co, V_co]': ...
+    def __new__(  # type: ignore
+            cls,
+            iterable: Iterable[tuple[K_co, V_co]],
+            /
+            ) -> 'frozendict[K_co, V_co]': ...
 
     @overload
     def __new__(
@@ -258,16 +276,16 @@ class frozendict(FrozendictBase[K_co, V_co]):
     # noinspection PyMethodOverriding
     @classmethod
     @overload
-    def fromkeys(cls, iterable: Iterable[K_co], /) -> 'frozendict[K_co, None]': ...
+    def fromkeys(cls, iterable: Iterable[K], /) -> 'frozendict[K, None]': ...
     # noinspection PyMethodOverriding
     @classmethod
     @overload
-    def fromkeys(cls, iterable: Iterable[K_co], value: V_co, /) -> 'frozendict[K_co, V_co]': ...
+    def fromkeys(cls, iterable: Iterable[K], value: T, /) -> 'frozendict[K, T]': ...
     @classmethod
     def fromkeys(cls, iterable, value = None, /): ...
 
-    def __or__(self, other: Mapping[K_co, V_co], /) -> 'frozendict[K_co, V_co]': ...
-    def __ror__(self, other: Mapping[K_co, V_co], /) -> 'frozendict[K_co, V_co]': ...
+    def __or__(self, other: Mapping[K_co, V_co], /) -> 'frozendict[K_co, V_co]': ...  # type: ignore
+    def __ror__(self, other: Mapping[K_co, V_co], /) -> 'frozendict[K_co, V_co]': ...  # type: ignore
 
     del fromkeys
     del __or__

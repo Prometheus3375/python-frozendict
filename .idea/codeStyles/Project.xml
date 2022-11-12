@@ -1,7 +1,7 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
     <option name="LINE_SEPARATOR" value="&#10;" />
-    <option name="RIGHT_MARGIN" value="100" />
+    <option name="RIGHT_MARGIN" value="102" />
     <Python>
       <option name="SPACE_AROUND_EQ_IN_NAMED_PARAMETER" value="true" />
       <option name="ALIGN_COLLECTIONS_AND_COMPREHENSIONS" value="false" />
@@ -12,12 +12,14 @@
       <option name="DICT_NEW_LINE_AFTER_LEFT_BRACE" value="true" />
       <option name="DICT_NEW_LINE_BEFORE_RIGHT_BRACE" value="true" />
       <option name="BLANK_LINES_AFTER_LOCAL_IMPORTS" value="1" />
+      <option name="OPTIMIZE_IMPORTS_SORT_NAMES_IN_FROM_IMPORTS" value="true" />
       <option name="OPTIMIZE_IMPORTS_JOIN_FROM_IMPORTS_WITH_SAME_SOURCE" value="true" />
       <option name="FROM_IMPORT_WRAPPING" value="5" />
       <option name="FROM_IMPORT_NEW_LINE_AFTER_LEFT_PARENTHESIS" value="true" />
       <option name="FROM_IMPORT_NEW_LINE_BEFORE_RIGHT_PARENTHESIS" value="true" />
       <option name="FROM_IMPORT_PARENTHESES_FORCE_IF_MULTILINE" value="true" />
       <option name="FROM_IMPORT_TRAILING_COMMA_IF_MULTILINE" value="true" />
+      <option name="HANG_CLOSING_BRACKETS" value="true" />
     </Python>
     <codeStyleSettings language="Python">
       <option name="BLANK_LINES_AROUND_METHOD" value="0" />
@@ -29,9 +31,6 @@
       <option name="METHOD_PARAMETERS_WRAP" value="5" />
       <option name="METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE" value="true" />
       <option name="METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE" value="true" />
-      <indentOptions>
-        <option name="CONTINUATION_INDENT_SIZE" value="4" />
-      </indentOptions>
     </codeStyleSettings>
   </code_scheme>
 </component>

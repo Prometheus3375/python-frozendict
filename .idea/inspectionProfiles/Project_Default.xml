@@ -19,7 +19,6 @@
       <option name="ignoredIdentifiers">
         <list>
           <option value="typing.Mapping.register" />
-          <option value="type.__getitem__" />
         </list>
       </option>
     </inspection_tool>

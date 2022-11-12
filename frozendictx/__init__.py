@@ -1,3 +1,5 @@
 from ._frozendict import FrozendictBase, frozendict, mapping_hash
 
-__all__ = 'frozendict', 'mapping_hash', 'FrozendictBase'
+version = '1.0.0'
+
+__all__ = 'FrozendictBase', 'frozendict', 'mapping_hash', 'version'

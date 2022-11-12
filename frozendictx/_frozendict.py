@@ -250,7 +250,7 @@ class frozendict(FrozendictBase[K_co, V_co]):
     # endregion
 
     def __new__(cls, iterable = (), /, **kwargs):
-        self = super().__new__(cls, iterable, **kwargs)
+        self = FrozendictBase.__new__(cls, iterable, **kwargs)
         self.__hash = None
         return self
 

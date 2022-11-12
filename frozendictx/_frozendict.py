@@ -27,6 +27,7 @@ class FrozendictBase(Generic[K_co, V_co]):
     Unhashable, supports ``copy`` and ``pickle`` modules.
     """
     __slots__ = '__source',
+    __source: dict  # for mypy
 
     # region new overload
     @overload
@@ -71,12 +72,6 @@ class FrozendictBase(Generic[K_co, V_co]):
         self = object.__new__(cls)
         self.__source = dict(iterable, **kwargs)
         return self
-
-    # added to avoid missing (why?) attribute in mypy
-    def __init__(self, iterable = (), /, **kwargs):
-        self.__source = dict(iterable, **kwargs)
-
-    del __init__
 
     def __getnewargs__(self, /):
         return self.__source,

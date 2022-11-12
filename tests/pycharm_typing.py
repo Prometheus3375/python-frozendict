@@ -1,4 +1,4 @@
-from frozendictx._frozendict import FrozendictBase, frozendict
+from frozendictx import FrozendictBase, frozendict
 
 
 def base_creation():

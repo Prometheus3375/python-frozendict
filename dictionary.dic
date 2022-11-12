@@ -2,3 +2,4 @@ unhashable
 interclass
 noninfringement
 PYTHONHASHSEED
+frozendictx

@@ -75,7 +75,9 @@ def run_for_n_values(n: int, io: IO, /):
             )
 
         for ins in instances:
-            value = get_time_value(repeat('v1 == v2', globals=globals_func(ins, d_shifted)))
+            value = get_time_value(
+                repeat('v1 == v2', repeat=100, globals=globals_func(ins, d_shifted))
+                )
             table.append([f'`{ins.__class__.__name__}`', value.formatted])
 
         io.write('\n')

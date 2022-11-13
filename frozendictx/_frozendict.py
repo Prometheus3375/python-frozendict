@@ -127,13 +127,9 @@ class FrozendictBase(Generic[K_co, V_co]):
         return self.__class__(deepcopy(self.__source, memo))
 
     def __str__(self, /):
-        return str(self.__source)
+        return f'{self.__class__.__name__}({self.__source if self.__source else ""})'
 
-    def __repr__(self, /):
-        if len(self.__source) == 0:
-            return f'{self.__class__.__name__}()'
-
-        return f'{self.__class__.__name__}({self.__source})'
+    __repr__ = __str__
 
     def __len__(self, /):
         return len(self.__source)

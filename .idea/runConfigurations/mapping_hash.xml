@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Run mapping_hash performance test" type="PythonConfigurationType" factoryName="Python">
+  <configuration default="false" name="mapping_hash" type="PythonConfigurationType" factoryName="Python" folderName="performance tests">
     <module name="python-frozendict" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />

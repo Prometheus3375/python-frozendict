@@ -150,13 +150,13 @@ class FrozendictBase(Generic[K_co, V_co]):
     def __reversed__(self, /) -> Iterator[K_co]:
         return reversed(self.__source)
 
-    def __or__(self, other: Mapping[K_co, V_co], /) -> 'FrozendictBase[K_co, V_co]':
+    def __or__(self, other: Mapping[K, T], /) -> 'FrozendictBase[Union[K_co, K], Union[V_co, T]]':
         if isinstance(other, Mapping):
             return self.__class__(chain(self.__source.items(), other.items()))
 
         return NotImplemented
 
-    def __ror__(self, other: Mapping[K_co, V_co], /) -> 'FrozendictBase[K_co, V_co]':
+    def __ror__(self, other: Mapping[K, T], /) -> 'FrozendictBase[Union[K_co, K], Union[V_co, T]]':
         if isinstance(other, Mapping):
             return self.__class__(chain(other.items(), self.__source.items()))
 
@@ -284,8 +284,8 @@ class frozendict(FrozendictBase[K_co, V_co]):
     @classmethod
     def fromkeys(cls, iterable, value = None, /): ...
 
-    def __or__(self, other: Mapping[K_co, V_co], /) -> 'frozendict[K_co, V_co]': ...  # type: ignore
-    def __ror__(self, other: Mapping[K_co, V_co], /) -> 'frozendict[K_co, V_co]': ...  # type: ignore
+    def __or__(self, other: Mapping[K, T], /) -> 'frozendict[Union[K_co, K], Union[V_co, T]]': ...
+    def __ror__(self, other: Mapping[K, T], /) -> 'frozendict[Union[K_co, K], Union[V_co, T]]': ...
 
     del fromkeys
     del __or__

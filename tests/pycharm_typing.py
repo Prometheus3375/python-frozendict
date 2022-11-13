@@ -1,6 +1,17 @@
 from frozendictx import FrozendictBase, frozendict
 
 
+class A:
+    def method_a(self, /):
+        print(self.__class__.__name__)
+
+
+class B(A):
+    def method_b(self, /):
+        self.method_a()
+        self.method_a()
+
+
 def base_creation():
     d1 = FrozendictBase()  # FrozendictBase | FrozendictBase[str, Any]
     d2 = FrozendictBase(one=1)  # FrozendictBase[str, int]
@@ -51,8 +62,14 @@ def base_or():
     d1 = FrozendictBase([('one', 1), ('two', 2)], three=3)
     d2 = FrozendictBase([('one', 1), ('two', 2)], three=3)
     d3 = FrozendictBase.fromkeys([1, 2, 3, 4, 5, 6], 'value')
-    d4 = d1 | d2  # FrozendictBase[str, int]
-    d5 = d1 | d3  # Expected type 'Mapping[str, int]'
+    d4 = FrozendictBase.fromkeys([1, 2, 3, 4, 5, 6], 0)
+    d5 = d1 | d2  # FrozendictBase[str, int]
+    d6 = d1 | d3  # FrozendictBase[str | int, str | int]
+    d7 = d1 | d4  # FrozendictBase[str | int, int]
+
+    da = FrozendictBase.fromkeys([1, 2, 3, 4, 5, 6], A())
+    db = FrozendictBase.fromkeys([1, 2, 3, 4, 5, 6], B())
+    combo = da | db  # FrozendictBase[int, A | B]
 
 
 def base_eq():
@@ -87,8 +104,14 @@ def frozendict_or():
     d1 = frozendict([('one', 1), ('two', 2)], three=3)
     d2 = frozendict([('one', 1), ('two', 2)], three=3)
     d3 = frozendict.fromkeys([1, 2, 3, 4, 5, 6], 'value')
-    d4 = d1 | d2  # frozendict[str, int]
-    d5 = d1 | d3  # Expected type 'Mapping[str, int]'
+    d4 = frozendict.fromkeys([1, 2, 3, 4, 5, 6], 0)
+    d5 = d1 | d2  # frozendict[str, int]
+    d6 = d1 | d3  # frozendict[str | int, str | int]
+    d7 = d1 | d4  # frozendict[str | int, int]
+
+    da = frozendict.fromkeys([1, 2, 3, 4, 5, 6], A())
+    db = frozendict.fromkeys([1, 2, 3, 4, 5, 6], B())
+    combo = da | db  # frozendict[int, A | B]
 
 
 def interclass_or():

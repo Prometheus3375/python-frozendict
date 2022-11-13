@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 from collections.abc import ItemsView, Iterable, Iterator, KeysView, Mapping, ValuesView
 from copy import deepcopy
 from itertools import chain
@@ -27,7 +28,6 @@ class FrozendictBase(Generic[K_co, V_co]):
     Unhashable, supports ``copy`` and ``pickle`` modules.
     """
     __slots__ = '__source',
-    __source: dict  # for mypy
 
     # region new overload
     @overload
@@ -35,9 +35,8 @@ class FrozendictBase(Generic[K_co, V_co]):
     @overload
     def __new__(cls, /, **kwargs: V_co) -> 'FrozendictBase[str, V_co]': ...
 
-    # https://github.com/python/mypy/issues/12733
     @overload
-    def __new__(  # type: ignore
+    def __new__(
             cls,
             mapping: SupportsKeysAndGetItem[K_co, V_co],
             /,
@@ -51,9 +50,8 @@ class FrozendictBase(Generic[K_co, V_co]):
             **kwargs: V_co,
             ) -> 'FrozendictBase[str, V_co]': ...
 
-    # https://github.com/python/mypy/issues/12733
     @overload
-    def __new__(  # type: ignore
+    def __new__(
             cls,
             iterable: Iterable[tuple[K_co, V_co]],
             /
@@ -90,16 +88,16 @@ class FrozendictBase(Generic[K_co, V_co]):
         """Create a new dictionary with keys from ``iterable`` and values set to ``value``."""
         return cls((k, value) for k in iterable)
 
-    def __getitem__(self, item: K_co, /) -> V_co:  # type: ignore
+    def __getitem__(self, item: K_co, /) -> V_co:
         return self.__source[item]
 
     # region get overload
     @overload
-    def get(self, key: K_co, /) -> Optional[V_co]: ...  # type: ignore
+    def get(self, key: K_co, /) -> Optional[V_co]: ...
     @overload
-    def get(self, key: K_co, default: V_co, /) -> V_co: ...  # type: ignore
+    def get(self, key: K_co, default: V_co, /) -> V_co: ...
     @overload
-    def get(self, key: K_co, default: T, /) -> Union[V_co, T]: ...  # type: ignore
+    def get(self, key: K_co, default: T, /) -> Union[V_co, T]: ...
     # endregion
 
     def get(self, key, default = None, /):
@@ -216,9 +214,8 @@ class frozendict(FrozendictBase[K_co, V_co]):
     @overload
     def __new__(cls, /, **kwargs: V_co) -> 'frozendict[str, V_co]': ...
 
-    # https://github.com/python/mypy/issues/12733
     @overload
-    def __new__(  # type: ignore
+    def __new__(
             cls,
             mapping: SupportsKeysAndGetItem[K_co, V_co],
             /,
@@ -232,9 +229,8 @@ class frozendict(FrozendictBase[K_co, V_co]):
             **kwargs: V_co,
             ) -> 'frozendict[str, V_co]': ...
 
-    # https://github.com/python/mypy/issues/12733
     @overload
-    def __new__(  # type: ignore
+    def __new__(
             cls,
             iterable: Iterable[tuple[K_co, V_co]],
             /

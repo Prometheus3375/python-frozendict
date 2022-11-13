@@ -7,3 +7,6 @@ __pycache__/
 # Builds
 /dist/
 /*.egg-info/
+
+# Project
+/reports/raw

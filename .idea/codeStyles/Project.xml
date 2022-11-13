@@ -1,7 +1,7 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
     <option name="LINE_SEPARATOR" value="&#10;" />
-    <option name="RIGHT_MARGIN" value="102" />
+    <option name="RIGHT_MARGIN" value="100" />
     <Python>
       <option name="SPACE_AROUND_EQ_IN_NAMED_PARAMETER" value="true" />
       <option name="ALIGN_COLLECTIONS_AND_COMPREHENSIONS" value="false" />

@@ -156,25 +156,11 @@ class FrozendictBase(Generic[K_co, V_co]):
 
         return NotImplemented
 
-    # todo measure the speed of such implementation with simple self.__source == other
     def __eq__(self, other: Any, /) -> bool:
-        if isinstance(other, FrozendictBase):
-            return self.__source == other.__source
+        return other == self.__source
 
-        if isinstance(other, Mapping):
-            return other == self.__source
-
-        return NotImplemented
-
-    # todo measure the speed of such implementation with simple self.__source != other
     def __ne__(self, other: Any, /) -> bool:
-        if isinstance(other, FrozendictBase):
-            return self.__source != other.__source
-
-        if isinstance(other, Mapping):
-            return other != self.__source
-
-        return NotImplemented
+        return other != self.__source
 
     def sizeof(self, /, gc_self: bool = True, gc_inner: bool = False) -> int:
         """Return the size of a dictionary in bytes.

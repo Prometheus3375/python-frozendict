@@ -8,8 +8,9 @@ https://docs.python.org/release/3.10.0/whatsnew/changelog.html#python-3-10-0-rel
 https://docs.python.org/release/3.9.7/whatsnew/changelog.html#python-3-9-7-final
 """
 
-from collections.abc import Set, Mapping
+from collections.abc import Mapping, Set
 from timeit import repeat
+from typing import IO
 
 from tests.performance.helper import *
 
@@ -37,7 +38,7 @@ def mapping_hash_2(m: Mapping, /) -> int:
     return hsh(m.items())
 
 
-def run_for_n_values(n: int, io: IO):
+def run_for_n_values(n: int, io: IO, /):
     d = {f'{i}': i for i in range(1, n + 1)}
     _ = d.items()  # if some caching exists
     io.write(f'# {n:,} items in dict\n\n')
@@ -45,7 +46,7 @@ def run_for_n_values(n: int, io: IO):
         ['Calculation way', 'Time required, s'],
         [Alignment.LEFT, Alignment.RIGHT],
         io,
-    )
+        )
 
     hash_frozenset = get_time_value(repeat('f(d)', globals=dict(d=d, f=mapping_hash_0)))
     table.append(['`hash(frozenset(...))`', hash_frozenset.formatted])

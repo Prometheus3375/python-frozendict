@@ -1,7 +1,7 @@
 import platform
 from datetime import datetime
 from enum import Enum
-from typing import NamedTuple, IO
+from typing import IO, NamedTuple
 
 
 class TimeValue(NamedTuple):
@@ -70,3 +70,6 @@ class Table:
 
     def __str__(self, /):
         return self._convert_rows()
+
+
+__all__ = 'TimeValue', 'get_time_value', 'report_header', 'Alignment', 'Table'

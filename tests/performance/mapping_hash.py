@@ -9,17 +9,12 @@ https://docs.python.org/release/3.9.7/whatsnew/changelog.html#python-3-9-7-final
 """
 
 from collections.abc import Mapping, Set
-from timeit import repeat
 from typing import IO
 
 from tests.performance.helper import *
 
 # noinspection PyUnresolvedReferences,PyProtectedMember
 hsh = Set._hash
-
-
-# TODO: add multiprocessing for each repeat
-# https://docs.python.org/3/howto/curses.html
 
 
 def mapping_hash_0(m: Mapping, /) -> int:
@@ -49,13 +44,13 @@ def run_for_n_values(n: int, io: IO, /):
         )
 
     hash_frozenset = get_time_value(repeat('f(d)', globals=dict(d=d, f=mapping_hash_0)))
-    table.append(['`hash(frozenset(...))`', hash_frozenset.formatted])
+    table.append(['`hash(frozenset(...))`', hash_frozenset.seconds])
 
     set_hash = get_time_value(repeat('f(d)', globals=dict(d=d, f=mapping_hash_1)))
-    table.append(['`Set._hash(...)`', set_hash.formatted])
+    table.append(['`Set._hash(...)`', set_hash.seconds])
 
     cached_set_hash = get_time_value(repeat('f(d)', globals=dict(d=d, f=mapping_hash_2)))
-    table.append(['Cached `Set._hash(...)`', cached_set_hash.formatted])
+    table.append(['Cached `Set._hash(...)`', cached_set_hash.seconds])
 
     io.write('\n')
 

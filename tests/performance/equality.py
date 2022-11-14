@@ -1,7 +1,6 @@
 from collections.abc import Mapping
 from typing import Any, IO
 
-from timeit import repeat
 from tests.performance.helper import *
 
 
@@ -78,7 +77,7 @@ def run_for_n_values(n: int, io: IO, /):
             value = get_time_value(
                 repeat('v1 == v2', repeat=100, globals=globals_func(ins, d_shifted))
                 )
-            table.append([f'`{ins.__class__.__name__}`', value.formatted])
+            table.append([f'`{ins.__class__.__name__}`', value.seconds])
 
         io.write('\n')
 

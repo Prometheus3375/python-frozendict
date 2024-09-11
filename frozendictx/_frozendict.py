@@ -67,7 +67,7 @@ class FrozendictBase(Generic[K_co, V_co]):
     # endregion
 
     def __new__(cls, iterable = (), /, **kwargs):
-        self = object.__new__(cls)
+        self = object.__new__(cls)  # todo check behaviour with multiple inheritance
         self.__source = dict(iterable, **kwargs)
         return self
 
@@ -229,6 +229,7 @@ class frozendict(FrozendictBase[K_co, V_co]):
 
     def __new__(cls, iterable = (), /, **kwargs):
         self = FrozendictBase.__new__(cls, iterable, **kwargs)
+        # todo check behaviour with multiple inheritance
         self.__hash = None
         return self
 
